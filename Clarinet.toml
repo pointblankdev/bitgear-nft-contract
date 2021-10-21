@@ -1,0 +1,11 @@
+[project]
+name = "clarity-nft"
+requirements = []
+costs_version = 1
+[contracts.bitgear]
+path = "contracts/bitgear.clar"
+depends_on = ["nft-trait"]
+
+[contracts.nft-trait]
+path = "contracts/nft-trait.clar"
+depends_on = []
