@@ -28,11 +28,14 @@
       )
         (asserts! (<= u0 (var-get gear-remaining)) (err ERR-ALL-MINTED))
         (var-set last-id (unwrap-panic (element-at tokens index)))
-        (try! 
-          (match
-            (stx-transfer? (unwrap-panic (element-at prices index)) tx-sender (as-contract tx-sender))
-              success (begin (mint (var-get last-id)))
-              error (err error)
+        (if (is-eq tx-sender contract-owner)
+          (try! (mint (var-get last-id)))
+          (try! 
+            (match
+              (stx-transfer? (unwrap-panic (element-at prices index)) tx-sender (as-contract tx-sender))
+                success (begin (mint (var-get last-id)))
+                error (err error)
+            )
           )
         )
         (ok index)
