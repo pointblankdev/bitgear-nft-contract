@@ -41,9 +41,14 @@
         (ok index)
     )
 )
+
 (define-private (mint (index uint))
-  (nft-mint? bitgear index tx-sender)
+  (begin
+    (try! (nft-mint? bitgear index tx-sender))
+    (var-set gear-remaining (- (var-get gear-remaining) u1))
+    (ok (var-get gear-remaining)))
 )
+
 (define-private (is-owner (index uint) (user principal))
   (is-eq user (unwrap! (nft-get-owner? bitgear index) false))
 )
