@@ -100,7 +100,6 @@
     (err ERR-NOT-AUTHORIZED)
   )
 )
-;; TODO this only work for "burned" gear, wont work for presale distributions. maybe thats ok?
 (define-public (grant (index uint) (recipient principal))
   (if (is-eq (var-get dungeon-master) tx-sender)
     (match (nft-transfer? bitgear index (as-contract tx-sender) recipient)
