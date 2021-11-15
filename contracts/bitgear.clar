@@ -1,3 +1,4 @@
+(impl-trait .nft-trait.nft-trait)
 (define-non-fungible-token bitgear uint)
 (define-constant ERR-NOT-AUTHORIZED u401)
 (define-constant ERR-MINT-LOCKED u402)
@@ -24,7 +25,7 @@
     (let (
         (prices (var-get price-list))
       )
-        (asserts! (is-eq (or (var-get mint-locked) false (is-eq tx-sender contract-owner))) (err ERR-MINT-LOCKED))
+        (asserts! (or (is-eq (var-get mint-locked) false) (is-eq tx-sender contract-owner)) (err ERR-MINT-LOCKED))
         (asserts! (<= u0 (var-get gear-remaining)) (err ERR-ALL-MINTED))
         (var-set last-id index)
         (if (is-eq tx-sender contract-owner)
@@ -53,7 +54,7 @@
   (ok (var-get last-id))
 )
 (define-read-only (get-token-uri (token-id uint))
-  (ok (concat (concat (var-get token-uri) (unwrap-panic (element-at (var-get uri-list) token-id))) ".json"))
+  (ok (some (concat (concat (var-get token-uri) (unwrap-panic (element-at (var-get uri-list) token-id))) ".json")))
 )
 (define-read-only (get-owner (index uint))
   (ok (nft-get-owner? bitgear index))
