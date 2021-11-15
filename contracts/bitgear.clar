@@ -24,7 +24,7 @@
     (let (
         (prices (var-get price-list))
       )
-        (asserts! (is-eq (var-get mint-locked) false) (err ERR-MINT-LOCKED))
+        (asserts! (is-eq (and (var-get mint-locked) false (is-eq tx-sender contract-owner))) (err ERR-MINT-LOCKED))
         (asserts! (<= u0 (var-get gear-remaining)) (err ERR-ALL-MINTED))
         (var-set last-id index)
         (if (is-eq tx-sender contract-owner)
