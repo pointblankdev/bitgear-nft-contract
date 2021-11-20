@@ -9,3 +9,15 @@ depends_on = ["nft-trait"]
 [contracts.nft-trait]
 path = "contracts/nft-trait.clar"
 depends_on = []
+
+[contracts.player-trait]
+path = "contracts/player-trait.clar"
+depends_on = []
+
+[contracts.byte-fighters-players]
+path = "contracts/byte-fighters-players.clar"
+depends_on = ["bitgear", "player-trait", "byte-fighters"]
+
+[contracts.byte-fighters]
+path = "contracts/byte-fighters.clar"
+depends_on = ["nft-trait"]
