@@ -1,6 +1,6 @@
 (define-trait character-trait-v0
   (
-    ;; (roll-character ((string-utf8 16) uint) (response bool uint))
+    (roll-character ((string-utf8 16) uint) (response bool uint))
 
     (equip-gear-main-hand (uint) (response bool uint))
     (equip-gear-off-hand (uint) (response bool uint))
