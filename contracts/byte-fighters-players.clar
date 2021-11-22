@@ -1,21 +1,33 @@
-(impl-trait .player-trait.player-trait-v0)
+(impl-trait .player-traits.character-trait-v0)
 
-(define-constant contract-owner tx-sender)
-(define-constant ERR-NOT-AUTHORIZED u401)
-(define-constant NOT-FOUND u404)
+(define-constant NOT-AUTHORIZED     u401)
+(define-constant NOT-FOUND          u404)
 
-(define-data-var player-count uint u0)
+(define-constant MAIN-HAND          u0)
+(define-constant OFF-HAND           u1)
+(define-constant HEAD               u2)
+(define-constant NECK               u3)
+(define-constant WRIST              u4)
+(define-constant RIGHT-RING-FINGER  u5)
+(define-constant LEFT-RING-FINGER   u6)
 
-;; TODO refactor to use a single map + merge logic
-(define-map name { address: principal } { name: (string-ascii 16) })
-(define-map avatar { address: principal } { avatar: uint })
-(define-map main-hand { address: principal } { main-hand: uint })
-(define-map off-hand { address: principal } { off-hand: uint })
-(define-map head { address: principal } { head: uint })
-(define-map neck { address: principal } { neck: uint })
-(define-map wrist { address: principal } { wrist: uint })
-(define-map right-ring-finger { address: principal } { right-ring-finger: uint })
-(define-map left-ring-finger { address: principal } { left-ring-finger: uint })
+(define-data-var player-list (list 2500 principal) 
+  (list)
+)
+
+(define-map characters { address: principal }
+  {
+    name: (string-utf8 16),
+    avatar: uint,
+    main-hand: (optional uint),
+    off-hand: (optional uint),
+    head: (optional uint),
+    neck: (optional uint),
+    wrist: (optional uint),
+    right-ring-finger: (optional uint),
+    left-ring-finger: (optional uint)
+  }
+)
 
 ;; TODO fill these out with supported gear for each slot
 (define-data-var gear-main-hand (list 3 uint)
@@ -40,60 +52,36 @@
     (list u0 u1 u2)
 )
 
-(define-public (equip-gear-main-hand (id uint)) (begin (try! (is-player)) (try! (is-gear-owner id)) (asserts! (is-some (index-of (var-get gear-main-hand) id)) (err NOT-FOUND)) (ok (begin (map-set main-hand { address: tx-sender } { main-hand: id })))))
-(define-public (equip-gear-off-hand (id uint)) (begin (try! (is-player)) (try! (is-gear-owner id)) (asserts! (is-some (index-of (var-get gear-off-hand) id)) (err NOT-FOUND)) (ok (begin (map-set off-hand { address: tx-sender } { off-hand: id })))))
-(define-public (equip-gear-head (id uint)) (begin (try! (is-player)) (try! (is-gear-owner id)) (asserts! (is-some (index-of (var-get gear-head) id)) (err NOT-FOUND)) (ok (begin (map-set head { address: tx-sender } { head: id })))))
-(define-public (equip-gear-neck (id uint)) (begin (try! (is-player)) (try! (is-gear-owner id)) (asserts! (is-some (index-of (var-get gear-neck) id)) (err NOT-FOUND)) (ok (begin (map-set neck { address: tx-sender } { neck: id })))))
-(define-public (equip-gear-wrist (id uint)) (begin (try! (is-player)) (try! (is-gear-owner id)) (asserts! (is-some (index-of (var-get gear-wrist) id)) (err NOT-FOUND)) (ok (begin (map-set wrist { address: tx-sender } { wrist: id })))))
-(define-public (equip-gear-right-ring-finger (id uint)) (begin (try! (is-player)) (try! (is-gear-owner id)) (asserts! (is-some (index-of (var-get gear-right-ring-finger) id)) (err NOT-FOUND)) (ok (begin (map-set right-ring-finger { address: tx-sender } { right-ring-finger: id })))))
-(define-public (equip-gear-left-ring-finger (id uint)) (begin (try! (is-player)) (try! (is-gear-owner id)) (asserts! (is-some (index-of (var-get gear-left-ring-finger) id)) (err NOT-FOUND)) (ok (begin (map-set left-ring-finger { address: tx-sender } { left-ring-finger: id })))))
+(define-read-only (get-character (address principal)) (ok (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND))))
 
-;; split contract into 2 contracts: players and equipment.
-(define-read-only (get-name) (ok (unwrap! (map-get? name { address: tx-sender }) (err NOT-FOUND))))
-(define-read-only (get-avatar) (ok (unwrap! (map-get? avatar { address: tx-sender }) (err NOT-FOUND))))
-(define-read-only (get-gear-main-hand) (ok (unwrap! (map-get? main-hand { address: tx-sender }) (err NOT-FOUND))))
-(define-read-only (get-gear-off-hand) (ok (unwrap! (map-get? off-hand { address: tx-sender }) (err NOT-FOUND))))
-(define-read-only (get-gear-head) (ok (unwrap! (map-get? head { address: tx-sender }) (err NOT-FOUND))))
-(define-read-only (get-gear-neck) (ok (unwrap! (map-get? neck { address: tx-sender }) (err NOT-FOUND))))
-(define-read-only (get-gear-wrist) (ok (unwrap! (map-get? wrist { address: tx-sender }) (err NOT-FOUND))))
-(define-read-only (get-gear-right-ring-finger) (ok (unwrap! (map-get? right-ring-finger { address: tx-sender }) (err NOT-FOUND))))
-(define-read-only (get-gear-left-ring-finger) (ok (unwrap! (map-get? left-ring-finger { address: tx-sender }) (err NOT-FOUND))))
+(define-public (equip-gear-main-hand (gear-id uint))                (let ((equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))) (try! (is-player)) (try! (is-gear-owner gear-id)) (asserts! (is-some (index-of (var-get gear-main-hand) gear-id)) (err NOT-FOUND)) (ok (begin (map-set characters { address: tx-sender } (merge equipped { main-hand: (some gear-id) }))))))
+(define-public (equip-gear-off-hand (gear-id uint))                 (let ((equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))) (try! (is-player)) (try! (is-gear-owner gear-id)) (asserts! (is-some (index-of (var-get gear-off-hand) gear-id)) (err NOT-FOUND)) (ok (begin (map-set characters { address: tx-sender } (merge equipped { main-hand: (some gear-id) }))))))
+(define-public (equip-gear-head (gear-id uint))                     (let ((equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))) (try! (is-player)) (try! (is-gear-owner gear-id)) (asserts! (is-some (index-of (var-get gear-head) gear-id)) (err NOT-FOUND)) (ok (begin (map-set characters { address: tx-sender } (merge equipped { main-hand: (some gear-id) }))))))
+(define-public (equip-gear-neck (gear-id uint))                     (let ((equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))) (try! (is-player)) (try! (is-gear-owner gear-id)) (asserts! (is-some (index-of (var-get gear-neck) gear-id)) (err NOT-FOUND)) (ok (begin (map-set characters { address: tx-sender } (merge equipped { main-hand: (some gear-id) }))))))
+(define-public (equip-gear-wrist (gear-id uint))                    (let ((equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))) (try! (is-player)) (try! (is-gear-owner gear-id)) (asserts! (is-some (index-of (var-get gear-wrist) gear-id)) (err NOT-FOUND)) (ok (begin (map-set characters { address: tx-sender } (merge equipped { main-hand: (some gear-id) }))))))
+(define-public (equip-gear-right-ring-finger (gear-id uint))        (let ((equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))) (try! (is-player)) (try! (is-gear-owner gear-id)) (asserts! (is-some (index-of (var-get gear-right-ring-finger) gear-id)) (err NOT-FOUND)) (ok (begin (map-set characters { address: tx-sender } (merge equipped { main-hand: (some gear-id) }))))))
+(define-public (equip-gear-left-ring-finger (gear-id uint))         (let ((equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))) (try! (is-player)) (try! (is-gear-owner gear-id)) (asserts! (is-some (index-of (var-get gear-left-ring-finger) gear-id)) (err NOT-FOUND)) (ok (begin (map-set characters { address: tx-sender } (merge equipped { main-hand: (some gear-id) }))))))
 
-(define-read-only (get-name-by-player-id (address principal)) (ok (unwrap! (map-get? name { address: address }) (err NOT-FOUND))))
-(define-read-only (get-avatar-by-player-id (address principal)) (ok (unwrap! (map-get? avatar { address: address }) (err NOT-FOUND))))
-(define-read-only (get-gear-main-hand-by-player-id (address principal)) (ok (unwrap! (map-get? main-hand { address: address }) (err NOT-FOUND))))
-(define-read-only (get-gear-off-hand-by-player-id (address principal)) (ok (unwrap! (map-get? off-hand { address: address }) (err NOT-FOUND))))
-(define-read-only (get-gear-head-by-player-id (address principal)) (ok (unwrap! (map-get? head { address: address }) (err NOT-FOUND))))
-(define-read-only (get-gear-neck-by-player-id (address principal)) (ok (unwrap! (map-get? neck { address: address }) (err NOT-FOUND))))
-(define-read-only (get-gear-wrist-by-player-id (address principal)) (ok (unwrap! (map-get? wrist { address: address }) (err NOT-FOUND))))
-(define-read-only (get-gear-right-ring-finger-by-player-id (address principal)) (ok (unwrap! (map-get? right-ring-finger { address: address }) (err NOT-FOUND))))
-(define-read-only (get-gear-left-ring-finger-by-player-id (address principal)) (ok (unwrap! (map-get? left-ring-finger { address: address }) (err NOT-FOUND))))
-
-(define-public (create-player (player-name (string-ascii 16)) (player-avatar uint))
+(define-public (roll-character (character-name (string-utf8 16)) (character-avatar uint))
   (begin
-    (try! (is-owner player-avatar ))
-    (ok 
-      (begin
-        (map-insert name { address: tx-sender } { name: player-name })
-        (map-insert avatar { address: tx-sender } { avatar: player-avatar })
-        (var-set player-count (+ (var-get player-count) u1))
-      )
-    )
+    (try! (is-owner character-avatar ))
+    (asserts! (map-insert characters { address: tx-sender } { name: character-name, avatar: character-avatar, main-hand: none, off-hand: none, head: none, neck: none, wrist: none, right-ring-finger: none, left-ring-finger: none }) (err NOT-AUTHORIZED))
+    (ok (var-set player-list (unwrap-panic (as-max-len? (append (var-get player-list) tx-sender) u2500))))
   )
 )
 
 (define-private (is-player)
-  (is-owner (get avatar (try! (get-avatar))))
+  (is-owner (get avatar (try! (get-character tx-sender))))
 )
 
-(define-private (is-gear-owner (id uint)) 
+(define-private (is-gear-owner (gear-id uint)) 
   (ok 
     (asserts! 
       (is-eq 
-        (unwrap! (unwrap-panic (as-contract (contract-call? .bitgear get-owner id))) (err ERR-NOT-AUTHORIZED))
+        (unwrap! (unwrap-panic (as-contract (contract-call? .bitgear get-owner gear-id))) (err NOT-AUTHORIZED))
         tx-sender
       )
-      (err ERR-NOT-AUTHORIZED)
+      (err NOT-AUTHORIZED)
     )
   )
 )
@@ -102,15 +90,14 @@
   (ok 
     (asserts! 
       (is-eq 
-        (unwrap! (unwrap-panic (as-contract (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.byte-fighters get-owner id))) (err ERR-NOT-AUTHORIZED))
+        (unwrap! (unwrap-panic (as-contract (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.byte-fighters get-owner id))) (err NOT-FOUND))
         tx-sender
       )
-      (err ERR-NOT-AUTHORIZED)
+      (err NOT-AUTHORIZED)
     )
   )
 )
 
-(define-read-only (get-player-count)
-  (ok (var-get player-count))
+(define-read-only (get-player-list)
+  (ok (var-get player-list))
 )
-
