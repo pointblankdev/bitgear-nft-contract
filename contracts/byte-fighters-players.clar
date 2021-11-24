@@ -1,4 +1,5 @@
-(impl-trait .player-traits.character-trait-v0)
+;; (impl-trait .player-traits.character-trait-v0)
+(impl-trait .popular-yellow-albatross.character-trait-v0)
 
 (define-constant NOT-AUTHORIZED     u401)
 (define-constant ALREADY-EQUIPPED   u403)
@@ -56,7 +57,7 @@
 
 (define-read-only (get-character (address principal))
   (ok 
-    (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND))
+    (unwrap! (map-get? characters { address: address }) (err NOT-FOUND))
   )
 )
 
@@ -358,7 +359,8 @@
   (ok 
     (asserts! 
       (is-eq 
-        (unwrap! (unwrap-panic (as-contract (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.byte-fighters get-owner id))) (err NOT-FOUND))
+        ;; (unwrap! (unwrap-panic (as-contract (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.byte-fighters get-owner id))) (err NOT-FOUND))
+        (unwrap! (unwrap-panic (as-contract (contract-call? 'ST674B6TF1ZDAJ6CB3Z5DYX5T7N43W0JNCWZBDM5.byte-fighters get-owner id))) (err NOT-FOUND))
         tx-sender
       )
       (err NOT-AUTHORIZED)
