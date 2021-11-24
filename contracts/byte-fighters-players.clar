@@ -347,7 +347,8 @@
   (ok 
     (asserts! 
       (is-eq 
-        (unwrap! (unwrap-panic (as-contract (contract-call? .bitgear get-owner gear-id))) (err NOT-AUTHORIZED))
+        ;; (unwrap! (unwrap-panic (as-contract (contract-call? .bitgear get-owner gear-id))) (err NOT-AUTHORIZED))
+        (unwrap! (unwrap-panic (as-contract (contract-call? .bitgear-genesis-rc4 get-owner gear-id))) (err NOT-AUTHORIZED))
         tx-sender
       )
       (err NOT-AUTHORIZED)
