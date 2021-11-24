@@ -4,9 +4,10 @@
 
     (equip-gear-main-hand (uint) (response bool uint))
     (equip-gear-off-hand (uint) (response bool uint))
+    (equip-gear-two-hand (uint) (response bool uint))
     (equip-gear-head (uint) (response bool uint))
     (equip-gear-neck (uint) (response bool uint))
-    (equip-gear-wrist (uint) (response bool uint))
+    (equip-gear-wrists (uint) (response bool uint))
     (equip-gear-right-ring-finger (uint) (response bool uint))
     (equip-gear-left-ring-finger (uint) (response bool uint))
 
@@ -19,9 +20,10 @@
           (avatar uint) 
           (main-hand (optional uint)) 
           (off-hand (optional uint)) 
+          (two-hand (optional uint)) 
           (head (optional uint)) 
           (neck (optional uint)) 
-          (wrist (optional uint)) 
+          (wrists (optional uint)) 
           (right-ring-finger (optional uint)) 
           (left-ring-finger (optional uint))
         )
