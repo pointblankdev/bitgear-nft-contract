@@ -5,9 +5,6 @@
   (
     (roll-character ((string-utf8 16) <avatar-trait> uint) (response bool uint))
 
-    ;; 7083 is the max size it seems
-    (get-player-list () (response (list 7083 principal) uint))
-
     (get-character (principal) 
       (response 
         (tuple 
