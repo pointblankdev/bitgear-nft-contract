@@ -6,6 +6,7 @@
 ;; (impl-trait .joyous-fuchsia-nightingale.character-trait-v0)
 
 (define-constant NOT-AUTHORIZED     u401)
+(define-constant MAX-PLAYERS        u402)
 (define-constant NOT-WHITELISTED    u403)
 (define-constant NOT-FOUND          u404)
 
@@ -46,6 +47,7 @@
   ) 
     (try! (get-player-list collection))
     (try! (is-owner collection token-id))
+    (asserts! (< (len player-list) u1000) (err MAX-PLAYERS))
     (asserts! (map-insert characters { address: tx-sender } { 
       name: character-name, 
       avatar: token-id
