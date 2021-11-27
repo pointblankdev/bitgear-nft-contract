@@ -1,7 +1,8 @@
 [project]
-name = "clarity-nft"
+name = "bitgear-world"
 requirements = []
 costs_version = 1
+
 [contracts.bitgear]
 path = "contracts/bitgear.clar"
 depends_on = ["nft-trait"]
@@ -10,14 +11,18 @@ depends_on = ["nft-trait"]
 path = "contracts/nft-trait.clar"
 depends_on = []
 
-[contracts.player-traits]
-path = "contracts/player-traits.clar"
-depends_on = []
+[contracts.bitgear-traits]
+path = "contracts/bitgear-traits.clar"
+depends_on = ["nft-trait"]
 
 [contracts.byte-fighters]
 path = "contracts/byte-fighters.clar"
 depends_on = ["nft-trait"]
 
-[contracts.byte-fighters-players]
-path = "contracts/byte-fighters-players.clar"
-depends_on = ["bitgear", "player-traits", "byte-fighters"]
+[contracts.equipment]
+path = "contracts/equipment.clar"
+depends_on = ["bitgear-traits"]
+
+[contracts.player-character]
+path = "contracts/player-character.clar"
+depends_on = ["bitgear", "bitgear-traits", "byte-fighters", "equipment"]

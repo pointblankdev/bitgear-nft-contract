@@ -1,27 +1,14 @@
-;; (impl-trait .player-traits.character-trait-v0)
-(impl-trait .popular-yellow-albatross.character-trait-v0)
+(use-trait gear-trait .nft-trait.nft-trait)
+(use-trait character-trait .bitgear-traits.character-trait-v0)
+
+(impl-trait .bitgear-traits.equipment-trait-v0)
 
 (define-constant NOT-AUTHORIZED     u401)
 (define-constant ALREADY-EQUIPPED   u403)
 (define-constant NOT-FOUND          u404)
 
-(define-constant MAIN-HAND          u0)
-(define-constant OFF-HAND           u1)
-(define-constant TWO-HAND           u2)
-(define-constant HEAD               u3)
-(define-constant NECK               u4)
-(define-constant WRISTS             u5)
-(define-constant RIGHT-RING-FINGER  u6)
-(define-constant LEFT-RING-FINGER   u7)
-
-(define-data-var player-list (list 2500 principal) 
-  (list)
-)
-
-(define-map characters { address: principal }
+(define-map equipment { address: principal }
   {
-    name: (string-utf8 16),
-    avatar: uint,
     main-hand: (optional uint),
     off-hand: (optional uint),
     two-hand: (optional uint),
@@ -55,208 +42,258 @@
     (list u2711 u2712 u2713 u2714 u2715 u2716 u2717 u2718 u2719 u2720 u2721 u2722 u2723 u2724 u2725 u2726 u2727 u2728 u2729 u2730 u2731 u2732 u2733 u2734 u2735 u2736 u2737 u2738 u2739 u2740 u2741 u2742 u2743 u2744 u2745 u2746 u2747 u2748 u2749 u2750 u2751 u2752 u2753 u2754 u2755 u2756 u2757 u2758 u2759 u2760 u2761 u2762 u2763 u2764 u2765 u2766 u2767 u2768 u2769 u2770 u2771 u2772 u2773 u2774 u2775 u2776 u2777 u2778 u2779 u2780 u2781 u2782 u2783 u2784 u2785 u2786 u2787 u2788 u2789 u2790 u2791 u2792 u2793 u2794 u2795 u2796 u2797 u2798 u2799 u2800 u2801 u2802 u2803 u2804 u2805 u2806 u2807 u2808 u2809 u2810 u2811 u2812 u2813 u2814 u2815 u2816 u2817 u2818 u2819 u2820 u2821 u2822 u2823 u2824 u2825 u2826 u2827 u2828 u2829 u2830 u2831 u2832 u2833 u2834 u2835 u2836 u2837 u2838 u2839 u2840 u2841 u2842 u2843 u2844 u2845 u2846 u2847 u2848 u2849 u2850 u2851 u2852 u2853 u2854 u2855 u2856 u2857 u2858 u2859 u2860 u2861 u2862 u2863 u2864 u2865 u2866 u2867 u2868 u2869 u2870 u2871 u2872 u2873 u2874 u2875 u2876 u2877 u2878 u2879 u2880 u2881 u2882 u2883 u2884 u2885 u2886 u2887 u2888 u2889 u2890 u2891 u2892 u2893 u2894 u2895 u2896 u2897 u2898 u2899 u2900 u2901 u2902 u2903 u2904 u2905 u2906 u2907 u2908 u2909 u2910 u2911 u2912 u2913 u2914 u2915 u2916 u2917 u2918 u2919 u2920 u2921 u2922 u2923 u2924 u2925 u2926 u2927 u2928 u2929 u2930 u2931 u2932 u2933 u2934 u2935 u2936 u2937 u2938 u2939 u2940 u2941 u2942 u2943 u2944 u2945 u2946 u2947 u2948 u2949 u2950 u2951 u2952 u2953 u2954 u2955 u2956 u2957 u2958 u2959 u2960 u2961 u2962 u2963 u2964 u2965 u2966 u2967 u2968 u2969 u2970 u2971 u2972 u2973 u2974 u2975 u2976 u2977 u2978 u2979)
 )
 
-(define-read-only (get-character (address principal))
+(define-public (initialize-equipment)
   (ok 
-    (unwrap! (map-get? characters { address: address }) (err NOT-FOUND))
+    (map-set equipment { address: tx-sender } { 
+      main-hand: none, 
+      off-hand: none, 
+      two-hand: none, 
+      head: none, 
+      neck: none, 
+      wrists: none, 
+      right-ring-finger: none, 
+      left-ring-finger: none 
+    })
   )
 )
 
-(define-public (equip-gear-main-hand (gear-id uint))
+(define-public (equip-gear-main-hand (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint))
   (let (
-    (equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
   ) 
-    (try! (is-player)) 
-    (try! (is-gear-owner gear-id)) 
-    ;; ensure that it is able to be equipped to the slot
-    (asserts! (is-some (index-of (var-get gear-main-hand) gear-id)) (err NOT-FOUND))
-    ;; ensure the gear is not already equipped
-    (asserts! (not (is-equipped equipped)) (err ALREADY-EQUIPPED)) 
-    ;; ensure two hand is not already equipped
-    (asserts! (not (is-two-hand-equipped equipped)) (err ALREADY-EQUIPPED)) 
+    (try! (can-equip-main-hand character-trait tx-sender gear-trait gear-id))
     (ok 
       (begin 
-        (map-set characters { address: tx-sender } (merge equipped { main-hand: (some gear-id) }))
+        (map-set equipment { address: tx-sender } (merge equipped { main-hand: (some gear-id) }))
       )
     )
   )
 )
-(define-public (equip-gear-off-hand (gear-id uint))
+
+(define-public (equip-gear-off-hand (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint))
   (let (
-    (equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
   ) 
-    (try! (is-player)) 
-    (try! (is-gear-owner gear-id)) 
-    ;; ensure that it is able to be equipped to the slot
-    (asserts! (is-some (index-of (var-get gear-off-hand) gear-id)) (err NOT-FOUND)) 
+    (try! (can-equip-off-hand character-trait tx-sender gear-trait gear-id))
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { off-hand: (some gear-id) }))
+      )
+    )
+  )
+)
+
+(define-public (equip-gear-two-hand (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint))
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (try! (can-equip-two-hand character-trait tx-sender gear-trait gear-id))
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { two-hand: (some gear-id) }))
+      )
+    )
+  )
+)
+
+(define-public (equip-gear-head (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint))
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (try! (can-equip-head character-trait tx-sender gear-trait gear-id))
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { head: (some gear-id) }))
+      )
+    )
+  )
+)
+
+(define-public (equip-gear-neck (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint)) 
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (try! (can-equip-neck character-trait tx-sender gear-trait gear-id))
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { neck: (some gear-id) }))
+      )
+    )
+  )
+)
+
+(define-public (equip-gear-wrists (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint)) 
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (try! (can-equip-wrists character-trait tx-sender gear-trait gear-id))
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { wrists: (some gear-id) }))
+      )
+    )
+  )
+)
+
+(define-public (equip-gear-right-ring-finger (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint))
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (try! (can-equip-finger character-trait tx-sender gear-trait gear-id))
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { right-ring-finger: (some gear-id) }))
+      )
+    )
+  )
+)
+
+(define-public (equip-gear-left-ring-finger (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint))
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (try! (can-equip-finger character-trait tx-sender gear-trait gear-id))
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { left-ring-finger: (some gear-id) }))
+      )
+    )
+  )
+)
+
+(define-read-only (get-equipment (address principal))
+  (ok 
+    (unwrap! (map-get? equipment { address: address }) (err NOT-FOUND))
+  )
+)
+
+(define-private (can-equip-main-hand (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
+  )
+    (try! (is-player character-trait player-address)) 
+    (try! (is-gear-owner gear-trait gear-id)) 
+    ;; ensure it can be equipped to the slot
+    (asserts! (is-some (index-of (var-get gear-main-hand) gear-id)) (err NOT-FOUND))
     ;; ensure the gear is not already equipped
     (asserts! (not (is-equipped equipped)) (err ALREADY-EQUIPPED))
     ;; ensure two hand is not already equipped
     (asserts! (not (is-two-hand-equipped equipped)) (err ALREADY-EQUIPPED)) 
-    (ok 
-      (begin 
-        (map-set characters { address: tx-sender } (merge equipped { off-hand: (some gear-id) }))
-      )
-    )
+    (ok true)
   )
 )
-(define-public (equip-gear-two-hand (gear-id uint))
+
+(define-private (can-equip-off-hand (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
   (let (
-    (equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))
-  ) 
-    (try! (is-player)) 
-    (try! (is-gear-owner gear-id)) 
-    ;; ensure that it is able to be equipped to the slot
-    (asserts! (is-some (index-of (var-get gear-two-hand) gear-id)) (err NOT-FOUND)) 
+    (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
+  )
+    (try! (is-player character-trait player-address)) 
+    (try! (is-gear-owner gear-trait gear-id)) 
+    ;; ensure it can be equipped to the slot
+    (asserts! (is-some (index-of (var-get gear-off-hand) gear-id)) (err NOT-FOUND))
+    ;; ensure the gear is not already equipped
+    (asserts! (not (is-equipped equipped)) (err ALREADY-EQUIPPED))
+    ;; ensure two hand is not already equipped
+    (asserts! (not (is-two-hand-equipped equipped)) (err ALREADY-EQUIPPED)) 
+    (ok true)
+  )
+)
+
+(define-private (can-equip-two-hand (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
+  )
+    (try! (is-player character-trait player-address)) 
+    (try! (is-gear-owner gear-trait gear-id)) 
+    ;; ensure it can be equipped to the slot
+    (asserts! (is-some (index-of (var-get gear-two-hand) gear-id)) (err NOT-FOUND))
     ;; ensure the gear is not already equipped
     (asserts! (not (is-equipped equipped)) (err ALREADY-EQUIPPED))
     ;; ensure main or off hand is not already equipped
     (asserts! (not (is-main-or-off-hand-equipped equipped)) (err ALREADY-EQUIPPED)) 
-    (ok 
-      (begin 
-        (map-set characters { address: tx-sender } (merge equipped { two-hand: (some gear-id) }))
-      )
-    )
-  )
-)
-(define-public (equip-gear-head (gear-id uint))
-  (let (
-    (equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))
-  ) 
-    (try! (is-player)) 
-    (try! (is-gear-owner gear-id)) 
-    ;; ensure that it is able to be equipped to the slot
-    (asserts! (is-some (index-of (var-get gear-head) gear-id)) (err NOT-FOUND)) 
-    ;; ensure the gear is not already equipped
-    (asserts! (not (is-equipped equipped)) (err ALREADY-EQUIPPED))
-    (ok 
-      (begin 
-        (map-set characters { address: tx-sender } (merge equipped { head: (some gear-id) }))
-      )
-    )
-  )
-)
-(define-public (equip-gear-neck (gear-id uint)) 
-  (let (
-    (equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))
-  ) 
-    (try! (is-player))
-    (try! (is-gear-owner gear-id))
-    ;; ensure that it is able to be equipped to the slot
-    (asserts! (is-some (index-of (var-get gear-neck) gear-id)) (err NOT-FOUND)) 
-    ;; ensure the gear is not already equipped
-    (asserts! (not (is-equipped equipped)) (err ALREADY-EQUIPPED))
-    (ok 
-      (begin 
-        (map-set characters { address: tx-sender } (merge equipped { neck: (some gear-id) }))
-      )
-    )
-  )
-)
-(define-public (equip-gear-wrists (gear-id uint)) 
-  (let (
-    (equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))
-  ) 
-    (try! (is-player))
-    (try! (is-gear-owner gear-id))
-    ;; ensure that it is able to be equipped to the slot
-    (asserts! (is-some (index-of (var-get gear-wrists) gear-id)) (err NOT-FOUND))
-    ;; ensure the gear is not already equipped
-    (asserts! (not (is-equipped equipped)) (err ALREADY-EQUIPPED))
-    (ok 
-      (begin 
-        (map-set characters { address: tx-sender } (merge equipped { wrists: (some gear-id) }))
-      )
-    )
-  )
-)
-(define-public (equip-gear-right-ring-finger (gear-id uint))
-  (let (
-    (equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))
-  ) 
-    (try! (is-player)) 
-    (try! (is-gear-owner gear-id)) 
-    ;; ensure that it is able to be equipped to the slot
-    (asserts! (is-some (index-of (var-get gear-finger) gear-id)) (err NOT-FOUND)) 
-    ;; ensure the gear is not already equipped
-    (asserts! (not (is-equipped equipped)) (err ALREADY-EQUIPPED))
-    (ok 
-      (begin 
-        (map-set characters { address: tx-sender } (merge equipped { right-ring-finger: (some gear-id) }))
-      )
-    )
-  )
-)
-(define-public (equip-gear-left-ring-finger (gear-id uint))
-  (let (
-    (equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))
-  ) 
-    (try! (is-player)) 
-    (try! (is-gear-owner gear-id))
-    ;; ensure that it is able to be equipped to the slot
-    (asserts! (is-some (index-of (var-get gear-finger) gear-id)) (err NOT-FOUND))
-    ;; ensure the gear is not already equipped
-    (asserts! (not (is-equipped equipped)) (err ALREADY-EQUIPPED))
-    (ok 
-      (begin 
-        (map-set characters { address: tx-sender } (merge equipped { left-ring-finger: (some gear-id) }))
-      )
-    )
+    (ok true)
   )
 )
 
-(define-public (unequip-gear (gear-id uint))
+(define-private (can-equip-head (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
   (let (
-    (equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))
-  ) 
-    (if 
-      (is-eq (get main-hand equipped) (some gear-id))
-      (map-set characters { address: tx-sender } (merge equipped { main-hand: none }))
-      false
-    )
-    (if 
-      (is-eq (get off-hand equipped) (some gear-id))
-      (map-set characters { address: tx-sender } (merge equipped { off-hand: none }))
-      false
-    )
-    (if 
-      (is-eq (get main-hand equipped) (some gear-id))
-      (map-set characters { address: tx-sender } (merge equipped { main-hand: none }))
-      false
-    )
-    (if 
-      (is-eq (get head equipped) (some gear-id))
-      (map-set characters { address: tx-sender } (merge equipped { head: none }))
-      false
-    )
-    (if 
-      (is-eq (get neck equipped) (some gear-id))
-      (map-set characters { address: tx-sender } (merge equipped { neck: none }))
-      false
-    )
-    (if 
-      (is-eq (get wrists equipped) (some gear-id))
-      (map-set characters { address: tx-sender } (merge equipped { wrists: none }))
-      false
-    )
-    (if 
-      (is-eq (get right-ring-finger equipped) (some gear-id))
-      (map-set characters { address: tx-sender } (merge equipped { right-ring-finger: none }))
-      false
-    )
-    (if 
-      (is-eq (get left-ring-finger equipped) (some gear-id))
-      (map-set characters { address: tx-sender } (merge equipped { left-ring-finger: none }))
-      false
-    )
+    (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
+  )
+    (try! (is-player character-trait player-address)) 
+    (try! (is-gear-owner gear-trait gear-id)) 
+    ;; ensure it can be equipped to the slot
+    (asserts! (is-some (index-of (var-get gear-head) gear-id)) (err NOT-FOUND))
+    ;; ensure the gear is not already equipped
+    (asserts! (not (is-equipped equipped)) (err ALREADY-EQUIPPED))
     (ok true)
+  )
+)
+
+(define-private (can-equip-neck (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
+  )
+    (try! (is-player character-trait player-address)) 
+    (try! (is-gear-owner gear-trait gear-id)) 
+    ;; ensure it can be equipped to the slot
+    (asserts! (is-some (index-of (var-get gear-neck) gear-id)) (err NOT-FOUND))
+    ;; ensure the gear is not already equipped
+    (asserts! (not (is-equipped equipped)) (err ALREADY-EQUIPPED))
+    (ok true)
+  )
+)
+
+(define-private (can-equip-wrists (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
+  )
+    (try! (is-player character-trait player-address)) 
+    (try! (is-gear-owner gear-trait gear-id)) 
+    ;; ensure it can be equipped to the slot
+    (asserts! (is-some (index-of (var-get gear-wrists) gear-id)) (err NOT-FOUND))
+    ;; ensure the gear is not already equipped
+    (asserts! (not (is-equipped equipped)) (err ALREADY-EQUIPPED))
+    (ok true)
+  )
+)
+
+(define-private (can-equip-finger (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
+  )
+    (try! (is-player character-trait player-address)) 
+    (try! (is-gear-owner gear-trait gear-id)) 
+    ;; ensure it can be equipped to the slot
+    (asserts! (is-some (index-of (var-get gear-finger) gear-id)) (err NOT-FOUND))
+    ;; ensure the gear is not already equipped
+    (asserts! (not (is-equipped equipped)) (err ALREADY-EQUIPPED))
+    (ok true)
+  )
+)
+
+(define-private (is-player (character-trait <character-trait>) (player-address principal))
+  (ok 
+    (unwrap! (contract-call? character-trait get-character player-address ) (err NOT-FOUND))
+  )
+)
+
+(define-private (is-gear-owner (gear-trait <gear-trait>) (id uint)) 
+  (begin
+    (ok 
+      (asserts! 
+        (is-eq 
+          (unwrap! (unwrap-panic (as-contract (contract-call? gear-trait get-owner id))) (err NOT-AUTHORIZED))
+          tx-sender
+        )
+        (err NOT-AUTHORIZED)
+      )
+    )
   )
 )
 
 (define-private (is-equipped 
     (equipped 
       (tuple 
-        (name (string-utf8 16)) 
-        (avatar uint) 
         (main-hand (optional uint)) 
         (off-hand (optional uint)) 
         (two-hand (optional uint)) 
@@ -283,8 +320,6 @@
 (define-private (is-two-hand-equipped 
     (equipped 
       (tuple 
-        (name (string-utf8 16)) 
-        (avatar uint) 
         (main-hand (optional uint)) 
         (off-hand (optional uint)) 
         (two-hand (optional uint)) 
@@ -301,8 +336,6 @@
 (define-private (is-main-or-off-hand-equipped 
     (equipped 
       (tuple 
-        (name (string-utf8 16)) 
-        (avatar uint) 
         (main-hand (optional uint)) 
         (off-hand (optional uint)) 
         (two-hand (optional uint)) 
@@ -320,55 +353,51 @@
   )
 )
 
-(define-public (roll-character (character-name (string-utf8 16)) (character-avatar uint))
-  (begin
-    (try! (is-owner character-avatar ))
-    (asserts! (map-insert characters { address: tx-sender } { 
-      name: character-name, 
-      avatar: character-avatar, 
-      main-hand: none, 
-      off-hand: none, 
-      two-hand: none, 
-      head: none, 
-      neck: none, 
-      wrists: none, 
-      right-ring-finger: none, 
-      left-ring-finger: none 
-    }) (err NOT-AUTHORIZED))
-    (ok (var-set player-list (unwrap-panic (as-max-len? (append (var-get player-list) tx-sender) u2500))))
-  )
-)
-
-(define-private (is-player)
-  (is-owner (get avatar (try! (get-character tx-sender))))
-)
-
-(define-private (is-gear-owner (gear-id uint)) 
-  (ok 
-    (asserts! 
-      (is-eq 
-        ;; (unwrap! (unwrap-panic (as-contract (contract-call? .bitgear get-owner gear-id))) (err NOT-AUTHORIZED))
-        (unwrap! (unwrap-panic (as-contract (contract-call? .bitgear-genesis-rc4 get-owner gear-id))) (err NOT-AUTHORIZED))
-        tx-sender
-      )
-      (err NOT-AUTHORIZED)
-    )
-  )
-)
-
-(define-private (is-owner (id uint)) 
-  (ok 
-    (asserts! 
-      (is-eq 
-        ;; (unwrap! (unwrap-panic (as-contract (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.byte-fighters get-owner id))) (err NOT-FOUND))
-        (unwrap! (unwrap-panic (as-contract (contract-call? 'ST674B6TF1ZDAJ6CB3Z5DYX5T7N43W0JNCWZBDM5.byte-fighters get-owner id))) (err NOT-FOUND))
-        tx-sender
-      )
-      (err NOT-AUTHORIZED)
-    )
-  )
-)
-
-(define-read-only (get-player-list)
-  (ok (var-get player-list))
-)
+;; TODO: re-implement this later if needed
+;; (define-public (unequip-gear (gear-id uint))
+;;   (let (
+;;     (equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))
+;;   ) 
+;;     (if 
+;;       (is-eq (get main-hand equipped) (some gear-id))
+;;       (map-set characters { address: tx-sender } (merge equipped { main-hand: none }))
+;;       false
+;;     )
+;;     (if 
+;;       (is-eq (get off-hand equipped) (some gear-id))
+;;       (map-set characters { address: tx-sender } (merge equipped { off-hand: none }))
+;;       false
+;;     )
+;;     (if 
+;;       (is-eq (get two-hand equipped) (some gear-id))
+;;       (map-set characters { address: tx-sender } (merge equipped { two-hand: none }))
+;;       false
+;;     )
+;;     (if 
+;;       (is-eq (get head equipped) (some gear-id))
+;;       (map-set characters { address: tx-sender } (merge equipped { head: none }))
+;;       false
+;;     )
+;;     (if 
+;;       (is-eq (get neck equipped) (some gear-id))
+;;       (map-set characters { address: tx-sender } (merge equipped { neck: none }))
+;;       false
+;;     )
+;;     (if 
+;;       (is-eq (get wrists equipped) (some gear-id))
+;;       (map-set characters { address: tx-sender } (merge equipped { wrists: none }))
+;;       false
+;;     )
+;;     (if 
+;;       (is-eq (get right-ring-finger equipped) (some gear-id))
+;;       (map-set characters { address: tx-sender } (merge equipped { right-ring-finger: none }))
+;;       false
+;;     )
+;;     (if 
+;;       (is-eq (get left-ring-finger equipped) (some gear-id))
+;;       (map-set characters { address: tx-sender } (merge equipped { left-ring-finger: none }))
+;;       false
+;;     )
+;;     (ok true)
+;;   )
+;; )
