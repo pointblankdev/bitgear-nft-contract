@@ -12,7 +12,7 @@
 (define-constant contract-owner tx-sender)
 (define-data-var dungeon-master principal tx-sender)
 
-(define-map player-character-collections { address: principal }
+(define-map collections { address: principal }
   {
     players: (list 1000 principal)
   }
@@ -25,23 +25,23 @@
   }
 )
 
-(define-public (add-player-character-collection (collection <avatar-trait>))
+(define-public (add-collection (collection <avatar-trait>))
   (if (is-eq (var-get dungeon-master) tx-sender)
-    (ok (map-insert player-character-collections { address: (contract-of collection) } {players: (list)}))
+    (ok (map-insert collections { address: (contract-of collection) } {players: (list)}))
     (err NOT-AUTHORIZED)
   )
 )
 
-(define-public (remove-player-character-collection (collection <avatar-trait>))
+(define-public (remove-collection (collection <avatar-trait>))
   (if (is-eq (var-get dungeon-master) tx-sender)
-    (ok (map-delete player-character-collections { address: (contract-of collection) }))
+    (ok (map-delete collections { address: (contract-of collection) }))
     (err NOT-AUTHORIZED)
   )
 )
 
 (define-public (roll-character (character-name (string-utf8 16)) (collection <avatar-trait>) (token-id uint))
   (let (
-    (pc-collections (unwrap! (map-get? player-character-collections { address: (contract-of collection) }) (err NOT-FOUND)))
+    (pc-collections (unwrap! (map-get? collections { address: (contract-of collection) }) (err NOT-FOUND)))
     (player-list (get players pc-collections))
   ) 
     (try! (get-player-list collection))
@@ -51,7 +51,7 @@
       avatar: token-id
     }) (err NOT-AUTHORIZED))
     (ok 
-      (map-set player-character-collections { address: (contract-of collection) } {
+      (map-set collections { address: (contract-of collection) } {
         players: (unwrap-panic (as-max-len? (append player-list tx-sender) u1000))
       })
     )
@@ -66,7 +66,7 @@
 
 (define-read-only (get-player-list (collection <avatar-trait>))
   (let (
-    (pc-collections (unwrap! (map-get? player-character-collections { address: (contract-of collection) }) (err NOT-WHITELISTED)))
+    (pc-collections (unwrap! (map-get? collections { address: (contract-of collection) }) (err NOT-WHITELISTED)))
     (player-list (get players pc-collections))
   ) 
     (ok player-list)
