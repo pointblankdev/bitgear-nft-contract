@@ -1,9 +1,9 @@
 (use-trait avatar-trait       .nft-trait.nft-trait)
 (use-trait equipment-trait    .bitgear-traits.equipment-trait-v0)
-;; (use-trait equipment-trait    .rubber-emerald-wallaby.equipment-trait-v0)
+;; (use-trait equipment-trait    .joyous-fuchsia-nightingale.equipment-trait-v0)
 
 (impl-trait .bitgear-traits.character-trait-v0)
-;; (impl-trait .rubber-emerald-wallaby.character-trait-v0)
+;; (impl-trait .joyous-fuchsia-nightingale.character-trait-v0)
 
 (define-constant NOT-AUTHORIZED     u401)
 (define-constant NOT-WHITELISTED    u403)
@@ -25,16 +25,16 @@
   }
 )
 
-(define-public (add-player-character-collection (collection-address principal))
+(define-public (add-player-character-collection (collection <avatar-trait>))
   (if (is-eq (var-get dungeon-master) tx-sender)
-    (ok (map-insert player-character-collections { address: collection-address } {players: (list)}))
+    (ok (map-insert player-character-collections { address: (contract-of collection) } {players: (list)}))
     (err NOT-AUTHORIZED)
   )
 )
 
-(define-public (remove-player-character-collection (collection-address principal))
+(define-public (remove-player-character-collection (collection <avatar-trait>))
   (if (is-eq (var-get dungeon-master) tx-sender)
-    (ok (map-delete player-character-collections { address: collection-address }))
+    (ok (map-delete player-character-collections { address: (contract-of collection) }))
     (err NOT-AUTHORIZED)
   )
 )
