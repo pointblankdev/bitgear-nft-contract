@@ -1,6 +1,4 @@
 (use-trait avatar-trait       .nft-trait.nft-trait)
-(use-trait equipment-trait    .bitgear-traits.equipment-trait-v0)
-;; (use-trait equipment-trait    .joyous-fuchsia-nightingale.equipment-trait-v0)
 
 (impl-trait .bitgear-traits.character-trait-v0)
 ;; (impl-trait .joyous-fuchsia-nightingale.character-trait-v0)
