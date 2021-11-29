@@ -1,7 +1,7 @@
-(use-trait gear-trait .nft-trait.nft-trait)
-(use-trait character-trait .bitgear-traits.character-trait-v0)
+(use-trait gear-contract .nft-trait.nft-trait)
+(use-trait player-character-contract .bitgear-traits-v0.character-trait)
 
-(impl-trait .bitgear-traits.equipment-trait-v0)
+(impl-trait .bitgear-traits-v0.equipment-trait)
 
 (define-constant NOT-AUTHORIZED     u401)
 (define-constant ALREADY-EQUIPPED   u403)
@@ -57,11 +57,11 @@
   )
 )
 
-(define-public (equip-gear-main-hand (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint))
+(define-public (equip-gear-main-hand (player-character-contract <player-character-contract>) (gear-contract <gear-contract>) (gear-id uint))
   (let (
     (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
   ) 
-    (try! (can-equip-main-hand character-trait tx-sender gear-trait gear-id))
+    (try! (can-equip-main-hand player-character-contract tx-sender gear-contract gear-id))
     (ok 
       (begin 
         (map-set equipment { address: tx-sender } (merge equipped { main-hand: (some gear-id) }))
@@ -70,11 +70,11 @@
   )
 )
 
-(define-public (equip-gear-off-hand (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint))
+(define-public (equip-gear-off-hand (player-character-contract <player-character-contract>) (gear-contract <gear-contract>) (gear-id uint))
   (let (
     (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
   ) 
-    (try! (can-equip-off-hand character-trait tx-sender gear-trait gear-id))
+    (try! (can-equip-off-hand player-character-contract tx-sender gear-contract gear-id))
     (ok 
       (begin 
         (map-set equipment { address: tx-sender } (merge equipped { off-hand: (some gear-id) }))
@@ -83,11 +83,11 @@
   )
 )
 
-(define-public (equip-gear-two-hand (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint))
+(define-public (equip-gear-two-hand (player-character-contract <player-character-contract>) (gear-contract <gear-contract>) (gear-id uint))
   (let (
     (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
   ) 
-    (try! (can-equip-two-hand character-trait tx-sender gear-trait gear-id))
+    (try! (can-equip-two-hand player-character-contract tx-sender gear-contract gear-id))
     (ok 
       (begin 
         (map-set equipment { address: tx-sender } (merge equipped { two-hand: (some gear-id) }))
@@ -96,11 +96,11 @@
   )
 )
 
-(define-public (equip-gear-head (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint))
+(define-public (equip-gear-head (player-character-contract <player-character-contract>) (gear-contract <gear-contract>) (gear-id uint))
   (let (
     (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
   ) 
-    (try! (can-equip-head character-trait tx-sender gear-trait gear-id))
+    (try! (can-equip-head player-character-contract tx-sender gear-contract gear-id))
     (ok 
       (begin 
         (map-set equipment { address: tx-sender } (merge equipped { head: (some gear-id) }))
@@ -109,11 +109,11 @@
   )
 )
 
-(define-public (equip-gear-neck (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint)) 
+(define-public (equip-gear-neck (player-character-contract <player-character-contract>) (gear-contract <gear-contract>) (gear-id uint)) 
   (let (
     (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
   ) 
-    (try! (can-equip-neck character-trait tx-sender gear-trait gear-id))
+    (try! (can-equip-neck player-character-contract tx-sender gear-contract gear-id))
     (ok 
       (begin 
         (map-set equipment { address: tx-sender } (merge equipped { neck: (some gear-id) }))
@@ -122,11 +122,11 @@
   )
 )
 
-(define-public (equip-gear-wrists (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint)) 
+(define-public (equip-gear-wrists (player-character-contract <player-character-contract>) (gear-contract <gear-contract>) (gear-id uint)) 
   (let (
     (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
   ) 
-    (try! (can-equip-wrists character-trait tx-sender gear-trait gear-id))
+    (try! (can-equip-wrists player-character-contract tx-sender gear-contract gear-id))
     (ok 
       (begin 
         (map-set equipment { address: tx-sender } (merge equipped { wrists: (some gear-id) }))
@@ -135,11 +135,11 @@
   )
 )
 
-(define-public (equip-gear-right-ring-finger (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint))
+(define-public (equip-gear-right-ring-finger (player-character-contract <player-character-contract>) (gear-contract <gear-contract>) (gear-id uint))
   (let (
     (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
   ) 
-    (try! (can-equip-finger character-trait tx-sender gear-trait gear-id))
+    (try! (can-equip-finger player-character-contract tx-sender gear-contract gear-id))
     (ok 
       (begin 
         (map-set equipment { address: tx-sender } (merge equipped { right-ring-finger: (some gear-id) }))
@@ -148,11 +148,11 @@
   )
 )
 
-(define-public (equip-gear-left-ring-finger (character-trait <character-trait>) (gear-trait <gear-trait>) (gear-id uint))
+(define-public (equip-gear-left-ring-finger (player-character-contract <player-character-contract>) (gear-contract <gear-contract>) (gear-id uint))
   (let (
     (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
   ) 
-    (try! (can-equip-finger character-trait tx-sender gear-trait gear-id))
+    (try! (can-equip-finger player-character-contract tx-sender gear-contract gear-id))
     (ok 
       (begin 
         (map-set equipment { address: tx-sender } (merge equipped { left-ring-finger: (some gear-id) }))
@@ -167,12 +167,12 @@
   )
 )
 
-(define-private (can-equip-main-hand (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
+(define-private (can-equip-main-hand (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
-    (try! (is-player character-trait player-address)) 
-    (try! (is-gear-owner gear-trait gear-id)) 
+    (try! (is-player player-character-contract player-address)) 
+    (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
     (asserts! (is-some (index-of (var-get gear-main-hand) gear-id)) (err NOT-FOUND))
     ;; ensure the gear is not already equipped
@@ -183,12 +183,12 @@
   )
 )
 
-(define-private (can-equip-off-hand (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
+(define-private (can-equip-off-hand (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
-    (try! (is-player character-trait player-address)) 
-    (try! (is-gear-owner gear-trait gear-id)) 
+    (try! (is-player player-character-contract player-address)) 
+    (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
     (asserts! (is-some (index-of (var-get gear-off-hand) gear-id)) (err NOT-FOUND))
     ;; ensure the gear is not already equipped
@@ -199,12 +199,12 @@
   )
 )
 
-(define-private (can-equip-two-hand (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
+(define-private (can-equip-two-hand (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
-    (try! (is-player character-trait player-address)) 
-    (try! (is-gear-owner gear-trait gear-id)) 
+    (try! (is-player player-character-contract player-address)) 
+    (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
     (asserts! (is-some (index-of (var-get gear-two-hand) gear-id)) (err NOT-FOUND))
     ;; ensure the gear is not already equipped
@@ -215,12 +215,12 @@
   )
 )
 
-(define-private (can-equip-head (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
+(define-private (can-equip-head (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
-    (try! (is-player character-trait player-address)) 
-    (try! (is-gear-owner gear-trait gear-id)) 
+    (try! (is-player player-character-contract player-address)) 
+    (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
     (asserts! (is-some (index-of (var-get gear-head) gear-id)) (err NOT-FOUND))
     ;; ensure the gear is not already equipped
@@ -229,12 +229,12 @@
   )
 )
 
-(define-private (can-equip-neck (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
+(define-private (can-equip-neck (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
-    (try! (is-player character-trait player-address)) 
-    (try! (is-gear-owner gear-trait gear-id)) 
+    (try! (is-player player-character-contract player-address)) 
+    (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
     (asserts! (is-some (index-of (var-get gear-neck) gear-id)) (err NOT-FOUND))
     ;; ensure the gear is not already equipped
@@ -243,12 +243,12 @@
   )
 )
 
-(define-private (can-equip-wrists (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
+(define-private (can-equip-wrists (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
-    (try! (is-player character-trait player-address)) 
-    (try! (is-gear-owner gear-trait gear-id)) 
+    (try! (is-player player-character-contract player-address)) 
+    (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
     (asserts! (is-some (index-of (var-get gear-wrists) gear-id)) (err NOT-FOUND))
     ;; ensure the gear is not already equipped
@@ -257,12 +257,12 @@
   )
 )
 
-(define-private (can-equip-finger (character-trait <character-trait>) (player-address principal) (gear-trait <gear-trait>) (gear-id uint))
+(define-private (can-equip-finger (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
-    (try! (is-player character-trait player-address)) 
-    (try! (is-gear-owner gear-trait gear-id)) 
+    (try! (is-player player-character-contract player-address)) 
+    (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
     (asserts! (is-some (index-of (var-get gear-finger) gear-id)) (err NOT-FOUND))
     ;; ensure the gear is not already equipped
@@ -271,18 +271,18 @@
   )
 )
 
-(define-private (is-player (character-trait <character-trait>) (player-address principal))
+(define-private (is-player (player-character-contract <player-character-contract>) (player-address principal))
   (ok 
-    (unwrap! (contract-call? character-trait get-character player-address ) (err NOT-FOUND))
+    (unwrap! (contract-call? player-character-contract get-character player-address ) (err NOT-FOUND))
   )
 )
 
-(define-private (is-gear-owner (gear-trait <gear-trait>) (id uint)) 
+(define-private (is-gear-owner (gear-contract <gear-contract>) (id uint)) 
   (begin
     (ok 
       (asserts! 
         (is-eq 
-          (unwrap! (unwrap-panic (as-contract (contract-call? gear-trait get-owner id))) (err NOT-AUTHORIZED))
+          (unwrap! (unwrap-panic (as-contract (contract-call? gear-contract get-owner id))) (err NOT-AUTHORIZED))
           tx-sender
         )
         (err NOT-AUTHORIZED)

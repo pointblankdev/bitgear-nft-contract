@@ -1,6 +1,6 @@
-(use-trait avatar-trait       .nft-trait.nft-trait)
+(use-trait collection-contract       .nft-trait.nft-trait)
 
-(impl-trait .bitgear-traits.character-trait-v0)
+(impl-trait .bitgear-traits-v0.character-trait)
 ;; (impl-trait .joyous-fuchsia-nightingale.character-trait-v0)
 
 (define-constant NOT-AUTHORIZED     u401)
@@ -24,21 +24,21 @@
   }
 )
 
-(define-public (add-collection (collection <avatar-trait>))
+(define-public (add-collection (collection <collection-contract>))
   (if (is-eq (var-get dungeon-master) tx-sender)
     (ok (map-insert collections { address: (contract-of collection) } {players: (list)}))
     (err NOT-AUTHORIZED)
   )
 )
 
-(define-public (remove-collection (collection <avatar-trait>))
+(define-public (remove-collection (collection <collection-contract>))
   (if (is-eq (var-get dungeon-master) tx-sender)
     (ok (map-delete collections { address: (contract-of collection) }))
     (err NOT-AUTHORIZED)
   )
 )
 
-(define-public (roll-character (character-name (string-utf8 16)) (collection <avatar-trait>) (token-id uint))
+(define-public (roll-character (character-name (string-utf8 16)) (collection <collection-contract>) (token-id uint))
   (let (
     (pc-collections (unwrap! (map-get? collections { address: (contract-of collection) }) (err NOT-WHITELISTED)))
     (player-list (get players pc-collections))
@@ -64,7 +64,7 @@
   )
 )
 
-(define-read-only (get-player-list (collection <avatar-trait>))
+(define-read-only (get-player-list (collection <collection-contract>))
   (let (
     (pc-collections (unwrap! (map-get? collections { address: (contract-of collection) }) (err NOT-WHITELISTED)))
     (player-list (get players pc-collections))
@@ -73,7 +73,7 @@
   )
 )
 
-(define-private (is-owner (collection <avatar-trait>) (id uint)) 
+(define-private (is-owner (collection <collection-contract>) (id uint)) 
   (ok 
     (asserts! 
       (is-eq 
