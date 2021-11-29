@@ -9,6 +9,7 @@
       (response 
         (tuple 
           (name (string-utf8 16))
+          (collection principal)
           (avatar uint) 
         )
         uint

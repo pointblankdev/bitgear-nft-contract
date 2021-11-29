@@ -20,6 +20,7 @@
 (define-map characters { address: principal }
   {
     name: (string-utf8 16),
+    collection: principal,
     avatar: uint
   }
 )
@@ -47,7 +48,8 @@
     (try! (is-owner collection token-id))
     (asserts! (< (len player-list) u1000) (err MAX-PLAYERS))
     (asserts! (map-insert characters { address: tx-sender } { 
-      name: character-name, 
+      name: character-name,
+      collection: (contract-of collection),
       avatar: token-id
     }) (err NOT-AUTHORIZED))
     (ok 
