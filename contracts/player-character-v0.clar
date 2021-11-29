@@ -1,7 +1,6 @@
 (use-trait collection-contract       .nft-trait.nft-trait)
 
 (impl-trait .bitgear-traits-v0.character-trait)
-;; (impl-trait .joyous-fuchsia-nightingale.character-trait-v0)
 
 (define-constant NOT-AUTHORIZED     u401)
 (define-constant MAX-PLAYERS        u402)
