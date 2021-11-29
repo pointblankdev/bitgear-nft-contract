@@ -40,7 +40,7 @@
 
 (define-public (roll-character (character-name (string-utf8 16)) (collection <avatar-trait>) (token-id uint))
   (let (
-    (pc-collections (unwrap! (map-get? collections { address: (contract-of collection) }) (err NOT-FOUND)))
+    (pc-collections (unwrap! (map-get? collections { address: (contract-of collection) }) (err NOT-WHITELISTED)))
     (player-list (get players pc-collections))
   ) 
     (try! (get-player-list collection))
