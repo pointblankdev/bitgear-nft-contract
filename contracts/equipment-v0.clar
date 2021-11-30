@@ -161,6 +161,102 @@
   )
 )
 
+(define-public (unequip-gear-main-hand)
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { main-hand: none }))
+      )
+    )
+  )
+)
+
+(define-public (unequip-gear-off-hand)
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { off-hand: none }))
+      )
+    )
+  )
+)
+
+(define-public (unequip-gear-two-hand)
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { two-hand: none }))
+      )
+    )
+  )
+)
+
+(define-public (unequip-gear-head)
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { head: none }))
+      )
+    )
+  )
+)
+
+(define-public (unequip-gear-neck)
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { neck: none }))
+      )
+    )
+  )
+)
+
+(define-public (unequip-gear-wrists)
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { wrists: none }))
+      )
+    )
+  )
+)
+
+(define-public (unequip-gear-right-ring-finger)
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { right-ring-finger: none }))
+      )
+    )
+  )
+)
+
+(define-public (unequip-gear-left-ring-finger)
+  (let (
+    (equipped (unwrap! (map-get? equipment { address: tx-sender }) (err NOT-FOUND)))
+  ) 
+    (ok 
+      (begin 
+        (map-set equipment { address: tx-sender } (merge equipped { left-ring-finger: none }))
+      )
+    )
+  )
+)
+
 (define-read-only (get-equipment (address principal))
   (ok 
     (unwrap! (map-get? equipment { address: address }) (err NOT-FOUND))
@@ -352,52 +448,3 @@
     (is-some (get off-hand equipped))
   )
 )
-
-;; TODO: re-implement this later if needed
-;; (define-public (unequip-gear (gear-id uint))
-;;   (let (
-;;     (equipped (unwrap! (map-get? characters { address: tx-sender }) (err NOT-FOUND)))
-;;   ) 
-;;     (if 
-;;       (is-eq (get main-hand equipped) (some gear-id))
-;;       (map-set characters { address: tx-sender } (merge equipped { main-hand: none }))
-;;       false
-;;     )
-;;     (if 
-;;       (is-eq (get off-hand equipped) (some gear-id))
-;;       (map-set characters { address: tx-sender } (merge equipped { off-hand: none }))
-;;       false
-;;     )
-;;     (if 
-;;       (is-eq (get two-hand equipped) (some gear-id))
-;;       (map-set characters { address: tx-sender } (merge equipped { two-hand: none }))
-;;       false
-;;     )
-;;     (if 
-;;       (is-eq (get head equipped) (some gear-id))
-;;       (map-set characters { address: tx-sender } (merge equipped { head: none }))
-;;       false
-;;     )
-;;     (if 
-;;       (is-eq (get neck equipped) (some gear-id))
-;;       (map-set characters { address: tx-sender } (merge equipped { neck: none }))
-;;       false
-;;     )
-;;     (if 
-;;       (is-eq (get wrists equipped) (some gear-id))
-;;       (map-set characters { address: tx-sender } (merge equipped { wrists: none }))
-;;       false
-;;     )
-;;     (if 
-;;       (is-eq (get right-ring-finger equipped) (some gear-id))
-;;       (map-set characters { address: tx-sender } (merge equipped { right-ring-finger: none }))
-;;       false
-;;     )
-;;     (if 
-;;       (is-eq (get left-ring-finger equipped) (some gear-id))
-;;       (map-set characters { address: tx-sender } (merge equipped { left-ring-finger: none }))
-;;       false
-;;     )
-;;     (ok true)
-;;   )
-;; )
