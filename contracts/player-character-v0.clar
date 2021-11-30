@@ -1,4 +1,4 @@
-(use-trait collection-contract       .nft-trait.nft-trait)
+(use-trait collection-contract .nft-trait.nft-trait)
 
 (impl-trait .bitgear-traits-v0.character-trait)
 
