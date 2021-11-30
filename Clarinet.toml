@@ -15,14 +15,22 @@ depends_on = []
 path = "contracts/bitgear-traits-v0.clar"
 depends_on = ["nft-trait"]
 
+[contracts.bitgear-traits-v1]
+path = "contracts/bitgear-traits-v1.clar"
+depends_on = ["nft-trait"]
+
 [contracts.byte-fighters]
 path = "contracts/byte-fighters.clar"
 depends_on = ["nft-trait"]
 
-[contracts.equipment-v0]
-path = "contracts/equipment-v0.clar"
-depends_on = ["bitgear-traits-v0"]
-
 [contracts.player-character-v0]
 path = "contracts/player-character-v0.clar"
 depends_on = ["bitgear", "bitgear-traits-v0", "byte-fighters", "equipment-v0"]
+
+[contracts.equipment-v0]
+path = "contracts/equipment-v0.clar"
+depends_on = ["bitgear-traits-v1"]
+
+[contracts.bitgear-genesis-slots]
+path = "contracts/bitgear-genesis-slots.clar"
+depends_on = ["bitgear-traits-v1"]
