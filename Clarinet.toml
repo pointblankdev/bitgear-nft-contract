@@ -3,13 +3,17 @@ name = "bitgear-world"
 requirements = []
 costs_version = 1
 
-[contracts.bitgear]
-path = "contracts/bitgear.clar"
-depends_on = ["nft-trait"]
-
 [contracts.nft-trait]
 path = "contracts/nft-trait.clar"
 depends_on = []
+
+[contracts.bitgear-genesis]
+path = "contracts/bitgear-genesis.clar"
+depends_on = ["nft-trait"]
+
+[contracts.byte-fighters]
+path = "contracts/byte-fighters.clar"
+depends_on = ["nft-trait"]
 
 [contracts.bitgear-traits-v0]
 path = "contracts/bitgear-traits-v0.clar"
@@ -19,13 +23,9 @@ depends_on = ["nft-trait"]
 path = "contracts/bitgear-traits-v1.clar"
 depends_on = ["nft-trait"]
 
-[contracts.byte-fighters]
-path = "contracts/byte-fighters.clar"
-depends_on = ["nft-trait"]
-
 [contracts.player-character-v0]
 path = "contracts/player-character-v0.clar"
-depends_on = ["bitgear", "bitgear-traits-v0", "byte-fighters", "equipment-v0"]
+depends_on = ["bitgear-genesis", "bitgear-traits-v0", "byte-fighters", "equipment-v0"]
 
 [contracts.equipment-v0]
 path = "contracts/equipment-v0.clar"
