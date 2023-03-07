@@ -34,3 +34,7 @@ depends_on = ["bitgear-traits-v1"]
 [contracts.bitgear-genesis-slots]
 path = "contracts/bitgear-genesis-slots.clar"
 depends_on = ["bitgear-traits-v1"]
+
+[contracts.woodlands-v0]
+path = "contracts/woodlands-v0.clar"
+depends_on = []

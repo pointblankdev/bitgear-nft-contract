@@ -1,0 +1,6 @@
+(define-public (take (gear-id uint))
+    (match (as-contract (contract-call? .bitgear-genesis grant gear-id tx-sender))
+        success (ok true)
+        error (err error)
+    )
+)
