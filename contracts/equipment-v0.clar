@@ -244,11 +244,27 @@
   )
 )
 
-;; TODO: Update to v1 with same-trait-principal check after https://github.com/blockstack/stacks-blockchain/pull/2756 is merged.
+(define-read-only (is-gear-equipped (address principal))
+  (ok 
+    (or
+      (is-some (get main-hand (unwrap! (get-equipment address) (err NOT-FOUND))))
+      (is-some (get off-hand (unwrap! (get-equipment address) (err NOT-FOUND))))
+      (is-some (get two-hand (unwrap! (get-equipment address) (err NOT-FOUND))))
+      (is-some (get head (unwrap! (get-equipment address) (err NOT-FOUND))))
+      (is-some (get neck (unwrap! (get-equipment address) (err NOT-FOUND))))
+      (is-some (get wrists (unwrap! (get-equipment address) (err NOT-FOUND))))
+      (is-some (get right-ring-finger (unwrap! (get-equipment address) (err NOT-FOUND))))
+      (is-some (get left-ring-finger (unwrap! (get-equipment address) (err NOT-FOUND))))
+    )
+  )
+)
+
 (define-private (can-equip-main-hand (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint) (gear-slots-contract <gear-slots-contract>))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
+    ;; ensure gear and gear-slots are from the same principal
+    ;; (try! (is-slots-trusted gear-contract gear-slots-contract)) 
     (try! (is-player player-character-contract player-address)) 
     (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
@@ -269,11 +285,12 @@
   )
 )
 
-;; TODO: Update to v1 with same-trait-principal check after https://github.com/blockstack/stacks-blockchain/pull/2756 is merged.
 (define-private (can-equip-off-hand (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint) (gear-slots-contract <gear-slots-contract>))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
+    ;; ensure gear and gear-slots are from the same principal
+    ;; (try! (is-slots-trusted gear-contract gear-slots-contract)) 
     (try! (is-player player-character-contract player-address)) 
     (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
@@ -294,11 +311,12 @@
   )
 )
 
-;; TODO: Update to v1 with same-trait-principal check after https://github.com/blockstack/stacks-blockchain/pull/2756 is merged.
 (define-private (can-equip-two-hand (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint) (gear-slots-contract <gear-slots-contract>))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
+    ;; ensure gear and gear-slots are from the same principal
+    ;; (try! (is-slots-trusted gear-contract gear-slots-contract)) 
     (try! (is-player player-character-contract player-address)) 
     (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
@@ -319,11 +337,12 @@
   )
 )
 
-;; TODO: Update to v1 with same-trait-principal check after https://github.com/blockstack/stacks-blockchain/pull/2756 is merged.
 (define-private (can-equip-head (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint) (gear-slots-contract <gear-slots-contract>))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
+    ;; ensure gear and gear-slots are from the same principal
+    ;; (try! (is-slots-trusted gear-contract gear-slots-contract)) 
     (try! (is-player player-character-contract player-address)) 
     (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
@@ -342,11 +361,12 @@
   )
 )
 
-;; TODO: Update to v1 with same-trait-principal check after https://github.com/blockstack/stacks-blockchain/pull/2756 is merged.
 (define-private (can-equip-neck (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint) (gear-slots-contract <gear-slots-contract>))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
+    ;; ensure gear and gear-slots are from the same principal
+    ;; (try! (is-slots-trusted gear-contract gear-slots-contract)) 
     (try! (is-player player-character-contract player-address)) 
     (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
@@ -365,11 +385,12 @@
   )
 )
 
-;; TODO: Update to v1 with same-trait-principal check after https://github.com/blockstack/stacks-blockchain/pull/2756 is merged.
 (define-private (can-equip-wrists (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint) (gear-slots-contract <gear-slots-contract>))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
+    ;; ensure gear and gear-slots are from the same principal
+    ;; (try! (is-slots-trusted gear-contract gear-slots-contract)) 
     (try! (is-player player-character-contract player-address)) 
     (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
@@ -388,11 +409,12 @@
   )
 )
 
-;; TODO: Update to v1 with same-trait-principal check after https://github.com/blockstack/stacks-blockchain/pull/2756 is merged.
 (define-private (can-equip-finger (player-character-contract <player-character-contract>) (player-address principal) (gear-contract <gear-contract>) (gear-id uint) (gear-slots-contract <gear-slots-contract>))
   (let (
     (equipped (unwrap! (map-get? equipment { address: player-address }) (err NOT-FOUND)))
   )
+    ;; ensure gear and gear-slots are from the same principal
+    ;; (try! (is-slots-trusted gear-contract gear-slots-contract)) 
     (try! (is-player player-character-contract player-address)) 
     (try! (is-gear-owner gear-contract gear-id)) 
     ;; ensure it can be equipped to the slot
@@ -410,6 +432,17 @@
     (ok true)
   )
 )
+
+;; (define-private (is-slots-trusted (gear-contract <gear-contract>) (gear-slots-contract <gear-slots-contract>))
+;;   (ok 
+;;     (asserts! 
+;;       (is-eq 
+;;         (get hash-bytes (principal-destruct? gear-contract)) (get hash-bytes (principal-destruct? gear-slots-contract))
+;;       )
+;;       (err NOT-AUTHORIZED)
+;;     )
+;;   )
+;; )
 
 (define-private (is-player (player-character-contract <player-character-contract>) (player-address principal))
   (ok 
