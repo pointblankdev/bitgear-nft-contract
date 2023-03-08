@@ -1,3 +1,4 @@
+;; bitgear-genesis-slots.clar
 
 (impl-trait .bitgear-traits-v1.gear-slots-trait)
 

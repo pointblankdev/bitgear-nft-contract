@@ -1,3 +1,5 @@
+;; equipment-v0.clar
+
 (use-trait gear-contract .nft-trait.nft-trait)
 (use-trait gear-slots-contract .bitgear-traits-v1.gear-slots-trait)
 (use-trait player-character-contract .bitgear-traits-v1.character-trait)

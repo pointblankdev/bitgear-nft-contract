@@ -1,3 +1,5 @@
+;; bitgear-traits-v1.clar
+
 (use-trait collection-contract  .nft-trait.nft-trait)
 (use-trait gear-contract        .nft-trait.nft-trait)
 

@@ -1,3 +1,5 @@
+;; player-character-v0.clar
+
 (use-trait collection-contract .nft-trait.nft-trait)
 
 (impl-trait .bitgear-traits-v0.character-trait)
